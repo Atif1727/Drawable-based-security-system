@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Image Similarity Comparison</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <style>
+        .upload-container {
+            margin-top: 30px;
+        }
+
+        .compare-btn {
+            margin-top: 20px;
+        }
+
+        .result-container {
+            margin-top: 20px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1 class="text-center">Image Similarity Comparison</h1>
+        <div class="row upload-container">
+            <div class="col-md-6">
+                <div class="custom-file">
+                    <input type="file" class="custom-file-input" id="file1" accept="image/*" required>
+                    <label class="custom-file-label" for="file1">Choose Original Image</label>
+                </div>
+                <div class="selected-file mt-2" id="selected-file1"></div>
+            </div>
+            <div class="col-md-6">
+                <div class="custom-file">
+                    <input type="file" class="custom-file-input" id="file2" accept="image/*" required>
+                    <label class="custom-file-label" for="file2">Choose New Image</label>
+                </div>
+                <div class="selected-file mt-2" id="selected-file2"></div>
+            </div>
+        </div>
+        <button class="btn btn-primary compare-btn" onclick="compareImages()">Compare Images</button>
+        <div class="result-container" id="result-container"></div>
+    </div>
+
+    <script>
+        // Display the selected file names
+        const file1 = document.getElementById('file1');
+        const file2 = document.getElementById('file2');
+        const label1 = document.querySelector('.custom-file-label[for="file1"]');
+        const label2 = document.querySelector('.custom-file-label[for="file2"]');
+        const selectedFile1 = document.getElementById('selected-file1');
+        const selectedFile2 = document.getElementById('selected-file2');
+
+        file1.addEventListener('change', () => {
+            label1.textContent = file1.files[0].name;
+        });
+
+        file2.addEventListener('change', () => {
+            label2.textContent = file2.files[0].name;
+        });
+
+        // Compare the images
+        function compareImages() {
+            const resultContainer = document.getElementById('result-container');
+            resultContainer.textContent = 'Comparing...';
+
+            const formData = new FormData();
+            formData.append('file1', file1.files[0]);
+            formData.append('file2', file2.files[0]);
+
+            fetch('/compare', {
+                method: 'POST',
+                body: formData
+            })
+            .then(response => response.text())
+            .then(result => {
+                resultContainer.textContent = result;
+            })
+            .catch(error => {
+                console.error(error);
+                resultContainer.textContent = 'Error occurred during comparison';
+            });
+        }
+    </script>
+</body>
+</html>
